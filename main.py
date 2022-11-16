@@ -160,7 +160,7 @@ def grad():
 def niveau_2():
     """ qu'elle traitement voulez vous effectuer?"""
     while True:
-        os.system('clear')
+        # os.system('clear')
         # output.clear()
         print("Choisissez l'option que vous voulez utilisé [1-7]: ")
         print("""
@@ -190,7 +190,7 @@ def niveau_2():
             entree()
             break
         # output.clear()
-        os.clear()
+        # os.clear()
         exit()
 
 
