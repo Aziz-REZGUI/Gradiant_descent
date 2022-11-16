@@ -12,18 +12,9 @@ from sympy.parsing.sympy_parser import null
 import os
 import matplotlib.pyplot as plt
 
-# plt.style.use('seaborn-poster')
 
-# def extract_symbols(string_func, nbS):
-#     i = 0
-#     s = ''
-#     while i < nbS:
-#         s += 'x' + str(i) + ' '
-#         i += 1
-#     x=symbols("x y ", real=True)
-#      return x
-x,y=symbols('x y',real=True)
-f1 = (1-x)**2 + 100*(y-x**2)**2
+x, y = symbols('x y', real=True)
+f1 = (1 - x) ** 2 + 100 * (y - x ** 2) ** 2
 func = None
 
 string_func = ""
@@ -41,11 +32,13 @@ def entree():
     print(func)
 
 
+
+
 def main():
     """ Affiche le menu principale du programme qui contient le choix de l'utilisateur"""
     while True:
         # output.clear()
-        os.system('clear')
+
         print("Choisissez l'option que vous voulez utilisé [1-3]: ")
         print("""
             1 : Choisir une fonction de la mémoire
@@ -63,7 +56,7 @@ def main():
             niveau_2()
         elif choix == '3':
             break
-        os.system('clear')
+        os.clear()
         # output.clear()
         exit()
 
@@ -74,12 +67,12 @@ def graph():
     # ax.grid()
     global x
     global y
-    print(eval(string_func))
-    t = eval(string_func)
+    # print(eval(string_func))
+    t =func
     X = np.linspace(-1, 1, 100)
     Y = np.linspace(-1, 1, 100)
     x, y = np.meshgrid(X, Y)
-
+    # t = f(x, y)
     ax.plot_surface(x, y, t, rstride=1, cstride=1, cmap='viridis', edgecolor='none')
     # ax.contour3D(x, y, t, 50, cmap='binary')
     # ax.plot3D(x, y, t)
@@ -94,73 +87,74 @@ def graph():
     plt.show()
 
 
-def graph_niveau():
-    # Tracer le graphe
-    ax = np.linspace(-1, 1, 100)
-    ay = np.linspace(-1, 1, 100)
-    ax, ay = np.meshgrid(ax, ay)
-    # fn =  simpledialog.askstring("Input","fonction")
-    print(eval(string_func))
-    Z = eval(string_func)
-    fig = plt.figure()
-    ax = fig.add_subplot(projection='3d')
-    print(cos(10) + sin(10))
-    # ax.plot_surface(x, y, Z)
-    ax.plot_surface(ax, ay, Z, cmap=cm.nipy_spectral_r)
-    msg = "Graphe du fonction  " + func
-    plt.title(msg)
-    ax.set_xlabel('x')
-    ax.set_ylabel('y')
-    ax.set_zlabel('Z')
-    # plt.legend("Graphe du fontion")
-    plt.figure(2)
-    plt.axis('equal')
-    # plt.contourf(x, y, Z, 20)
-    plt.contour(ax, ay, Z, cmap=cm.nipy_spectral_r)
-    plt.colorbar()
-    plt.show()
+# def graph_niveau():
+#     # Tracer le graphe
+#     ax = np.linspace(-1, 1, 100)
+#     ay = np.linspace(-1, 1, 100)
+#     ax, ay = np.meshgrid(ax, ay)
+#     # fn =  simpledialog.askstring("Input","fonction")
+#     print(eval(string_func))
+#     Z = eval(string_func)
+#     fig = plt.figure()
+#     ax = fig.add_subplot(projection='3d')
+#     print(cos(10) + sin(10))
+#     # ax.plot_surface(x, y, Z)
+#     ax.plot_surface(ax, ay, Z, cmap=cm.nipy_spectral_r)
+#     msg = "Graphe du fonction  " + func
+#     plt.title(msg)
+#     ax.set_xlabel('x')
+#     ax.set_ylabel('y')
+#     ax.set_zlabel('Z')
+#     # plt.legend("Graphe du fontion")
+#     plt.figure(2)
+#     plt.axis('equal')
+#     # plt.contourf(x, y, Z, 20)
+#     plt.contour(ax, ay, Z, cmap=cm.nipy_spectral_r)
+#     plt.colorbar()
+#     plt.show()
 
 
 def grad():
     # x,y=symbols('x y',real=True)
-    f=func
-    tab=[diff(f,x),diff(f,y)]
+    f = func
+    tab = [diff(f, x), diff(f, y)]
     return tab
 
-def extract_symbols(string_func, nbS):
-    i = 0
-    s = ''
-    while i < nbS:
-        s += 'x' + str(i) + ' '
-        i += 1
-    return symbols(s, real=True)
+
+# def extract_symbols(string_func, nbS):
+#     i = 0
+#     s = ''
+#     while i < nbS:
+#         s += 'x' + str(i) + ' '
+#         i += 1
+#     return symbols(s, real=True)
 
 
 # vecteur gradient
-def gradient(string_func, nbS=2):
-    X = [x, y]
-    func = eval(string_func)
-    i = 0
-    dX = [None] * nbS
-    while i < nbS:
-        dX[i] = diff(func, X[i])
-        i += 1
-    return dX
+# def gradient(string_func, nbS=2):
+#     X = [x, y]
+#     func = eval(string_func)
+#     i = 0
+#     dX = [None] * nbS
+#     while i < nbS:
+#         dX[i] = diff(func, X[i])
+#         i += 1
+#     return dX
 
 
 # matrice hessienne
-def hessienne(dX, string_func):
-    nbS = len(dX)
-    i = 0
-    X = extract_symbols(string_func, nbS)
-    H = np.array([[None] * nbS, [None] * nbS])
-    while i < nbS:
-        j = 0
-        while j < nbS:
-            H[i, j] = diff(dX[i], X[j])
-            j += 1
-        i += 1
-    return H
+# def hessienne(dX, string_func):
+#     nbS = len(dX)
+#     i = 0
+#     X = extract_symbols(string_func, nbS)
+#     H = np.array([[None] * nbS, [None] * nbS])
+#     while i < nbS:
+#         j = 0
+#         while j < nbS:
+#             H[i, j] = diff(dX[i], X[j])
+#             j += 1
+#         i += 1
+#     return H
 
 
 def niveau_2():
@@ -184,7 +178,7 @@ def niveau_2():
         # elif choix == '2':
 
         elif choix == '3':
-            print("le gradiant est "  )
+            print("le gradiant est ")
             print(grad())
         # elif choix == '4':
         #     hessienne(dX, string_func)
@@ -196,7 +190,7 @@ def niveau_2():
             entree()
             break
         # output.clear()
-        os.system('clear')
+        os.clear()
         exit()
 
 
