@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 
 x, y = symbols('x y', real=True)
 f1 = (1 - x) ** 2 + 100 * (y - x ** 2) ** 2
+f2=None
 func = None
 
 string_func = ""
