@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 
 x, y = symbols('x y', real=True)
 f1 = (1 - x) ** 2 + 100 * (y - x ** 2) ** 2
-f2 = None
+f2 = None  #TODO ken araft kifet tdakhl la 2eme fction just hottha houni MANEL/EYA
 func = None
 
 string_func = ""
@@ -65,13 +65,13 @@ def graph():
     # ax.grid()
     global x
     global y
-    # print(eval(string_func))
+    print(func)
     t = func
     X = np.linspace(-1, 1, 100)
     Y = np.linspace(-1, 1, 100)
     x, y = np.meshgrid(X, Y)
     # t = f(x, y)
-    ax.plot_surface(x, y, t, rstride=1, cstride=1, cmap='viridis', edgecolor='none')
+    ax.plot_surface(x, y, t, rstride=1, cstride=1, cmap='viridis', edgecolor='none')#TODO houni l'erreur apparently MANEL/EYA
     # ax.contour3D(x, y, t, 50, cmap='binary')
     # ax.plot3D(x, y, t)
     # ax.plot_surface(x, y,t, rstride=1, cstride=1, cmap='viridis', edgecolor='none')
