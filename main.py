@@ -12,10 +12,9 @@ from sympy.parsing.sympy_parser import null
 import os
 import matplotlib.pyplot as plt
 
-
 x, y = symbols('x y', real=True)
 f1 = (1 - x) ** 2 + 100 * (y - x ** 2) ** 2
-f2=None
+f2 = None
 func = None
 
 string_func = ""
@@ -25,14 +24,12 @@ def entree():
     # instance les variables pour le fonctionnement de eval
     # nbvariable = int(input("Donner le nombre de variables"))
     global string_func
-    string_func = input("Entrer votre fonction avec des parametres x et y  :")
+    string_func = input("Entrer votre fonction avec des parametres x et y  :").lower()
     # X = extract_symbols(string_func, nbvariable)
     # fct = lambda x, y: string_func
     global func
     func = eval(string_func)
     print(func)
-
-
 
 
 def main():
@@ -69,7 +66,7 @@ def graph():
     global x
     global y
     # print(eval(string_func))
-    t =func
+    t = func
     X = np.linspace(-1, 1, 100)
     Y = np.linspace(-1, 1, 100)
     x, y = np.meshgrid(X, Y)
@@ -119,6 +116,16 @@ def grad():
     # x,y=symbols('x y',real=True)
     f = func
     tab = [diff(f, x), diff(f, y)]
+    return tab
+
+
+def hessienne():
+    params = [x, y]
+    gradd = grad()
+    tab = np.array([[None] * 2, [None] * 2])
+    for i in range(2):
+        for j in range(2):
+            tab[i, j] = diff(gradd[i], params[j])
     return tab
 
 
@@ -181,8 +188,9 @@ def niveau_2():
         elif choix == '3':
             print("le gradiant est ")
             print(grad())
-        # elif choix == '4':
-        #     hessienne(dX, string_func)
+        elif choix == '4':
+            print("l'hessienne est ")
+            print(hessienne())
         # elif choix == '5':
         #     conjugue(A, b, X, itMax, tol)
         # elif choix == '6':
