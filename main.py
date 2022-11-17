@@ -1,24 +1,14 @@
-import time
 from sys import exit
 import numpy as np
-import scipy.linalg as sci
-import symbol as sy
 import sympy as sp
-from sympy import symbols, cos, diff
-import sys
-from tkinter import simpledialog
-
-from matplotlib import cm
 from sympy import *
-from sympy.parsing.sympy_parser import null
 import os
 import matplotlib.pyplot as plt
 
 # jarrabt el hessienne wel grad yekhdmou maa l graph wel l de niveau jawna ahla jaw
 x, y = symbols('x y', real=True)
-
 func = None
-f1=None
+f1 = None
 string_func = ""
 
 
@@ -34,16 +24,23 @@ def functions():  # HAWEL TCHOUF CHNIA MOCHKOLT L MENU HEDHA
            3 : f3(x,y) = x * exp (-x**2 - y**2)"""
               )
         choix = input("\nEntrez votre choix [1-3] : ")
-        global  func
+        global func
         if choix == '1':
             func = (1 - x) ** 2 + 100 * (y - x ** 2) ** 2
+            break
         elif choix == '2':
             break
         #     #func = None TODO ken araft kifet tdakhl la 2eme fction just hottha houni MANEL/EYA
         elif choix == '3':
             func = x * exp(-x ** 2 - y ** 2)
+            break
+        else:
+            print("choix incorrecte")
+            functions()
+            break
 
-        niveau_2()
+
+
 
         # os.clear()
         # output.clear()
@@ -82,7 +79,11 @@ def main():
             niveau_2()
         elif choix == '3':
             break
+        else:
+            print("choix incorrecte")
+            main()
         os.clear()
+
         # output.clear()
         exit()
 
@@ -263,6 +264,9 @@ def niveau_2():
         elif choix == '7':
             entree()
             break
+        else:
+            print("choix incorrecte")
+            niveau_2()
         # output.clear()
         # os.clear()
         exit()
