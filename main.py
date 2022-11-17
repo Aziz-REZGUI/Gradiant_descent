@@ -3,6 +3,8 @@ from sys import exit
 import numpy as np
 import scipy.linalg as sci
 import symbol as sy
+import sympy as sp
+from sympy import symbols, cos, diff
 import sys
 from tkinter import simpledialog
 
@@ -12,12 +14,40 @@ from sympy.parsing.sympy_parser import null
 import os
 import matplotlib.pyplot as plt
 
+# jarrabt el hessienne wel grad yekhdmou maa l graph wel l de niveau jawna ahla jaw
 x, y = symbols('x y', real=True)
-f1 = (1 - x) ** 2 + 100 * (y - x ** 2) ** 2
-f2 = None  #TODO ken araft kifet tdakhl la 2eme fction just hottha houni MANEL/EYA
-func = None
 
+func = None
+f1=None
 string_func = ""
+
+
+def functions():  # HAWEL TCHOUF CHNIA MOCHKOLT L MENU HEDHA
+    """ qu'elle fonction voulez vous choisir? """
+    while True:
+        os.system('clear')
+        # output.clear()
+        print("Choisissez l'option que vous voulez utilisé [1-3]: ")
+        print("""
+           1 : f1(x,y) = (1-x) ** 2 + 100 * ( y - (x ** 2) ** 2)"
+           2 : f2 = None  #
+           3 : f3(x,y) = x * exp (-x**2 - y**2)"""
+              )
+        choix = input("\nEntrez votre choix [1-3] : ")
+        global  func
+        if choix == '1':
+            func = (1 - x) ** 2 + 100 * (y - x ** 2) ** 2
+        elif choix == '2':
+            break
+        #     #func = None TODO ken araft kifet tdakhl la 2eme fction just hottha houni MANEL/EYA
+        elif choix == '3':
+            func = x * exp(-x ** 2 - y ** 2)
+
+        niveau_2()
+
+        # os.clear()
+        # output.clear()
+        # exit()
 
 
 def entree():
@@ -45,10 +75,8 @@ def main():
               )
         choix = input("\nEntrez votre choix [1-3] : ")
         if choix == '1':
-            global func
-            func = f1
+            functions()
             niveau_2()
-        # menu_fonctions()
         if choix == '2':
             entree()
             niveau_2()
@@ -59,30 +87,67 @@ def main():
         exit()
 
 
-def graph():
-    fig = plt.figure(figsize=(8, 8))
-    ax = plt.axes(projection='3d')
-    # ax.grid()
-    global x
-    global y
+def graph(func):
+    x, y = sp.symbols('x y', real=True)
+    v1 = var('x y')
+    a = np.linspace(-400, 400, 100)
+    b = np.linspace(-400, 400, 100)
+    X, Y = np.meshgrid(a, b)
     print(func)
-    t = func
-    X = np.linspace(-1, 1, 100)
-    Y = np.linspace(-1, 1, 100)
-    x, y = np.meshgrid(X, Y)
-    # t = f(x, y)
-    ax.plot_surface(x, y, t, rstride=1, cstride=1, cmap='viridis', edgecolor='none')#TODO houni l'erreur apparently MANEL/EYA
-    # ax.contour3D(x, y, t, 50, cmap='binary')
-    # ax.plot3D(x, y, t)
-    # ax.plot_surface(x, y,t, rstride=1, cstride=1, cmap='viridis', edgecolor='none')
-    ax.set_title('3D Parametric Plot')
-
-    # Set axes label
-    ax.set_xlabel('x', labelpad=20)
-    ax.set_ylabel('y', labelpad=20)
-    ax.set_zlabel('t', labelpad=20)
-
+    f = lambdify([x, y], func, "numpy")
+    Z = f(X, Y)
+    fig = plt.figure(figsize=(10, 7))
+    ax = plt.axes(projection='3d')
+    ax.plot_surface(X, Y, Z, rstride=5, cstride=5,
+                    cmap='cool')
+    ax.set_title("Surface Bonus", fontsize=13)
+    ax.set_xlabel('x', fontsize=11)
+    ax.set_ylabel('y', fontsize=11)
+    ax.set_zlabel('Z', fontsize=11)
     plt.show()
+
+
+def graph_niveau(func):
+    x, y = sp.symbols('x y', real=True)
+    v1 = var('x y')
+    xlist = np.linspace(-3.0, 3.0, 100)
+    ylist = np.linspace(-3.0, 3.0, 100)
+    X, Y = np.meshgrid(xlist, ylist)
+    f = lambdify([x, y], func, "numpy")
+    Z = f(X, Y)
+    fig, ax = plt.subplots(1, 1)
+    cp = ax.contour(X, Y, Z)
+    fig.colorbar(cp)  # Add a colorbar to a plot
+    ax.set_title('Filled Contours Plot')
+    # ax.set_xlabel('x (cm)')
+    ax.set_ylabel('y (cm)')
+    plt.show()
+
+
+# def graph():
+#    fig = plt.figure(figsize=(8, 8))
+#    ax = plt.axes(projection='3d')
+#    # ax.grid()
+#    global x
+#    global y
+#    print(func)
+#    t = func
+#    X = np.linspace(-1, 1, 100)
+#    Y = np.linspace(-1, 1, 100)
+#    x, y = np.meshgrid(X, Y)
+# t = f(x, y)
+#    ax.plot_surface(x, y, t, rstride=1, cstride=1, cmap='viridis', edgecolor='none')#TODO houni l'erreur apparently MANEL/EYA
+# ax.contour3D(x, y, t, 50, cmap='binary')
+# ax.plot3D(x, y, t)
+# ax.plot_surface(x, y,t, rstride=1, cstride=1, cmap='viridis', edgecolor='none')
+#    ax.set_title('3D Parametric Plot')
+
+# Set axes label
+#    ax.set_xlabel('x', labelpad=20)
+#    ax.set_ylabel('y', labelpad=20)
+#    ax.set_zlabel('t', labelpad=20)
+
+#    plt.show()
 
 
 # def graph_niveau():
@@ -182,9 +247,9 @@ def niveau_2():
               )
         choix = input("\nEntrez votre choix [1-7] : ")
         if choix == '1':
-            graph()
-        # elif choix == '2':
-
+            graph(func)
+        elif choix == '2':
+            graph_niveau(func)
         elif choix == '3':
             print("le gradiant est ")
             print(grad())
