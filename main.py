@@ -30,7 +30,7 @@ def functions():  # HAWEL TCHOUF CHNIA MOCHKOLT L MENU HEDHA
             break
         elif choix == '2':
             break
-        #     #func = None TODO ken araft kifet tdakhl la 2eme fction just hottha houni MANEL/EYA
+            # func = None #TODO ken araft kifet tdakhl la 2eme fction just hottha houni MANEL/EYA
         elif choix == '3':
             func = x * exp(-x ** 2 - y ** 2)
             break
@@ -38,9 +38,6 @@ def functions():  # HAWEL TCHOUF CHNIA MOCHKOLT L MENU HEDHA
             print("choix incorrecte")
             functions()
             break
-
-
-
 
         # os.clear()
         # output.clear()
@@ -119,7 +116,7 @@ def graph_niveau(func):
     fig, ax = plt.subplots(1, 1)
     cp = ax.contour(X, Y, Z)
     fig.colorbar(cp)  # Add a colorbar to a plot
-    ax.set_title('Filled Contours Plot')
+    ax.set_title('Graph de niveau')
     # ax.set_xlabel('x (cm)')
     ax.set_ylabel('y (cm)')
     plt.show()
