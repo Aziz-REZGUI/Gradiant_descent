@@ -8,6 +8,7 @@ import os
 import scipy.linalg as spl
 import matplotlib.pyplot as plt
 from numpy import linalg as LA, matrix
+import scipy.optimize as op
 
 # jarrabt el hessienne wel grad yekhdmou maa l graph wel l de niveau jawna ahla jaw
 x, y = symbols('x y', real=True)
@@ -18,7 +19,7 @@ A = None
 B = None
 eps = None
 Matrix = false
-Rosen = false
+rosen = false
 
 
 def functions():  # HAWEL TCHOUF CHNIA MOCHKOLT L MENU HEDHA
@@ -36,8 +37,8 @@ def functions():  # HAWEL TCHOUF CHNIA MOCHKOLT L MENU HEDHA
         global func, x
         if choix == '1':
             func = (1 - x) ** 2 + 100 * (y - x ** 2) ** 2
-            global Rosen
-            Rosen = true
+            global rosen
+            rosen = true
             break
         elif choix == '2':
             global A, B
@@ -49,11 +50,11 @@ def functions():  # HAWEL TCHOUF CHNIA MOCHKOLT L MENU HEDHA
             B = np.array([1, 2, 3, 4, 5])
             # x = matrix[x]
             # func = 0.5 * x @ A @ x - x @ B
-            #TODO how to draw this ?? abir ??
+            # TODO how to draw this ?? abir ??
             break
 
         elif choix == '3':
-            func = x * exp(-x ** 2 - y ** 2)#TODO to change with quadratic polynomial
+            func = x * exp(-x ** 2 - y ** 2)  # TODO to change with quadratic polynomial : Manel
             break
         else:
             print("choix incorrecte")
@@ -70,11 +71,18 @@ def entree():
     # instance les variables pour le fonctionnement de eval
     # nbvariable = int(input("Donner le nombre de variables"))
     global string_func
-    string_func = input("Entrer votre fonction avec des parametres x et y  :").lower()
+    # string_func = input("""Votre fonction est sous la forme f(x,y)=ax**2+by**2+cxy:
+    #                         sachant que x**2 est x au carrée \nentez les coeff a,b,c séparées par virgule',' """).lower()
+    a, b, c = [int(x) for x in input("""Votre fonction est sous la forme f(x,y)=ax**2+by**2+cxy:
+                            sachant que x**2 est x au carrée \nentez les coeff a,b,c séparées par virgule',' """).split(
+        ', ')]
     # X = extract_symbols(string_func, nbvariable)
     # fct = lambda x, y: string_func
-    global func
-    func = eval(string_func)
+    global func, x, y, rosen
+
+    # func = eval(string_func)
+    func = a * x ** 2 + b * y ** 2 + c * x * y
+    rosen = false
     print(func)
     # TODO  force user to enter quadratic form
 
@@ -121,10 +129,11 @@ def choix_entree():
         print("""
                1 : saisir une fonction polynomiale.
                2 : Saisir une fonction matricielle.
+               3 : Saisir une fonction de rosenbork.
                3 : revenir au menu précédant."""
               )
 
-        # TODO add rosenbrok type
+        # TODO add rosenbrok type:Manel
         choix = input("\nEntrez votre choix [1-3] : ")
         if choix == '1':
             entree()
@@ -132,7 +141,11 @@ def choix_entree():
         if choix == '2':
             entrer_matrice()
             niveau_2()
-        elif choix == '3':
+        if choix == '3':
+            global rosen
+            rosen = true
+            # TODO manel add rosen here
+        elif choix == '4':
             main()
             break
         else:
@@ -250,12 +263,12 @@ def conjugue(A, b, X, itMax, tol, pas=0):
             Ap = A.dot(P)  # A * P
             if pas == 0:  # cas optimal
                 alpha = np.transpose(R).dot(R) / np.transpose(P).dot(Ap)  # pas optimale
-            X = X + (alpha * P)  # X(k+1) = X(k) + direction(k) * pas(k) TODO also this
+            X = X + (alpha * P)  # X(k+1) = X(k) + direction(k) * pas(k) TODO also this :eya
             Rancien = R  # R(k) -->gradient f(k+1)
             R = R - (alpha * Ap)  # R(k+1) --> -gradient f(k+1)
 
             beta = (np.transpose(R).dot(R) / np.transpose(Rancien).dot(Rancien))
-            P = R + beta * P  # direction k+1 TODO check how to draw this in the graph
+            P = R + beta * P  # direction k+1 TODO check how to draw this in the graph: eya
 
             k = k + 1  # incrémentation d'itération
         # print("\nle nombre d'itération = \n", k)
@@ -302,21 +315,39 @@ def hessienne(f):
 
 
 def comparatif(A, B):
-    list = [[0, 0, 0], [1, 2, 3], [3, 3, 4]]
-    results = np.zeros((len(A), 1))
+    # list = [[0, 0, 0], [1, 2, 3], [3, 3, 4]]
+    # results = np.zeros((len(A), 1))
     # b = np.array([[3.], [2.], [3.]])  # b=vecteur colonne (0 1)
     # X0 = np.array([[0.], [0.], [0.]])  # x0=vecteur colonne (0 0)
     # a = np.array([[2., 0., 1], [0., 2., 0.], [1., 0., 2.]])  # A=matrice carré
     tol = 1e-5  # La précision fixée à 10e-5
-    for i in range(0, 3):
-        x0 = np.random.random_sample(size=(len(A), 1))
-        x0.astype(int)
-        A.astype(int)
-        B.astype(int)
-        B = B.T
-        X, k, du = conjugue(A, B, x0, 100, 1.5e-8)
-        print("la resultat n°\n", i, "=", X, "avec un vecteur de depart x0 :", x0, "et une durée d'exec = ", du,
-              "et un nbr exec ", k)
+    if rosen:
+        x, y = sp.symbols('x y', real=True)
+        f = lambdify([(x, y)], func, "numpy")
+        list = [[0, 0], [1, 2], [2, 3]]  # TODO to check with omar
+        for i in [0, 1, 2]:
+            # z = f(x, y)
+            x0 = random.choice(list)
+            X = x0[0]
+            Y = x0[1]
+
+            # grad = rosenbrock_grad([X, Y])
+            # chercher la direction initial ali hiya -grad(f(x0))
+            # d0 = [-grad[0], -grad[1]]
+            print("comparatif numero ", i, "avec x0 = ", x0)
+            # print("direction initial d0 = ", d0)
+            print(op.fmin_cg(f, (x0[0], x0[1])))
+            print("\n")
+    else:
+        for i in range(0, 3):
+            x0 = np.random.random_sample(size=(len(A), 1))
+            x0.astype(int)
+            A.astype(int)
+            B.astype(int)
+            B = B.T
+            X, k, du = conjugue(A, B, x0, 100, 1.5e-8)
+            print("la resultat n°\n", i, "=", X, "avec un vecteur de depart x0 :", x0, "et une durée d'exec = ", du,
+                  "et un nbr exec ", k)
 
 
 # TODO add niveau 3
@@ -347,13 +378,12 @@ def niveau_2():
         elif choix == '4':
             print("l'hessienne est ")
             print(hessienne(func))
-        elif choix == '5':
-                #TODO redirection vers niv 3
-            #conjugue(A, b, X, itMax, tol)
+        # elif choix == '5':
+        # TODO redirection vers niv 3
+        # conjugue(A, b, X, itMax, tol)
         elif choix == '6':
             comparatif(A, B)
             # TODO test (Rosenbrok)
-
         elif choix == '7':
             entree()
             break
@@ -363,7 +393,9 @@ def niveau_2():
         # output.clear()
         #         # os.clear()
         exit()
-#TODO
+
+
+# TODO
 
 if __name__ == '__main__':
     main()
