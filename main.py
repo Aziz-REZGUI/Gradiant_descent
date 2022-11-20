@@ -284,16 +284,16 @@ def graph_niveau(func):
     plt.show()
 
 
-def grad():
+def grad(f):
     # x,y=symbols('x y',real=True)
-    f = func
+    # f = func
     tab = [diff(f, x), diff(f, y)]
     return tab
 
 
-def hessienne():
+def hessienne(f):
     params = [x, y]
-    gradd = grad()
+    gradd = grad(f)
     tab = np.array([[None] * 2, [None] * 2])
     for i in range(2):
         for j in range(2):
@@ -343,10 +343,10 @@ def niveau_2():
             graph_niv(func, ax)
         elif choix == '3':
             print("le gradiant est ")
-            print(grad())
+            print(grad(func))
         elif choix == '4':
             print("l'hessienne est ")
-            print(hessienne())
+            print(hessienne(func))
         elif choix == '5':
                 #TODO redirection vers niv 3
             #conjugue(A, b, X, itMax, tol)
