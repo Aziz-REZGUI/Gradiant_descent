@@ -348,8 +348,8 @@ def niveau_2():
             print("l'hessienne est ")
             print(hessienne())
         elif choix == '5':
-        # TODO redirection vers niv 3
-        # conjugue(A, b, X, itMax, tol)
+                #TODO redirection vers niv 3
+            #conjugue(A, b, X, itMax, tol)
         elif choix == '6':
             comparatif(A, B)
             # TODO test (Rosenbrok)
