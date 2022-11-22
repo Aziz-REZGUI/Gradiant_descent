@@ -34,7 +34,7 @@ def functions():  # HAWEL TCHOUF CHNIA MOCHKOLT L MENU HEDHA
            3 : f3(x,y) = 5 * x ** 2 + 3 * y ** 2 + 2 * x * y"""
               )  # TODO write this function's message
         choix = input("\nEntrez votre choix [1-3] : ")
-        global func, x,y,A,B
+        global func, x, y, A, B
         if choix == '1':
             func = (1 - x) ** 2 + 100 * (y - (x ** 2)) ** 2
             # func = pow(1-x,2)+100*pow(y-pow(x,2),2)
@@ -42,15 +42,16 @@ def functions():  # HAWEL TCHOUF CHNIA MOCHKOLT L MENU HEDHA
             rosen = true
             break
         elif choix == '2':
-            global A, B
+            global A, B, Matrix
             A = np.array([[3, -1, 0, 0, 0],
                           [-1, 12, -1, 0, 0],
                           [0, -1, 24, -1, 0],
                           [0, 0, -1, 48, -1],
                           [0, 0, 0, -1, 96]])
             B = np.array([1, 2, 3, 4, 5])
+            Matrix = true
             # x = matrix[x]
-            # func = 0.5 * x @ A @ x - x @ B
+            func = f(x, A, B, C=0)
             # TODO how to draw this ?? abir ??
             break
 
@@ -68,6 +69,8 @@ def functions():  # HAWEL TCHOUF CHNIA MOCHKOLT L MENU HEDHA
 #         # os.clear()
 # output.clear()
 # exit()
+def f(x, A, b, c):
+    return 0.5 * x.T @ A @ x - b.T @ x + c
 
 
 def entree():
@@ -77,17 +80,18 @@ def entree():
     # string_func = input("""Votre fonction est sous la forme f(x,y)=ax**2+by**2+cxy:
     #                         sachant que x**2 est x au carrée \nentez les coeff a,b,c séparées par virgule',' """).lower()
     a, b, c = [int(x) for x in input("""Votre fonction est sous la forme f(x,y)=ax**2+by**2+cxy:
-                            sachant que x**2 est x au carrée \nentez les coeff a,b,c séparées par virgule',' """).split(',')]
+                            sachant que x**2 est x au carrée \nentez les coeff a,b,c séparées par virgule',' """).split(
+        ',')]
     # X = extract_symbols(string_func, nbvariable)
     # fct = lambda x, y: string_func
-    global func, x, y, rosen,A,B
+    global func, x, y, rosen, A, B
 
     # func = eval(string_func)
     func = a * x ** 2 + b * y ** 2 + c * x * y
     rosen = false
     print(func)
-    A=hessienne(func)
-    B=conv_B(func)
+    A = hessienne(func)
+    B = conv_B(func)
     # TODO  force user to enter quadratic form
 
 
@@ -119,7 +123,8 @@ def entrer_matrice():
     n = int(input("Entrer le dimension de la matrice"))
     global A
     global B
-    global eps
+    global eps, Matrix
+    Matrix = true
     A = np.zeros((n, n))
     B = np.zeros((n, 1))
     for r in range(0, n):
@@ -346,7 +351,6 @@ def Rozen_brock_GC():
 
 
 def conv_B(f):
-
     # f = lambdify([x, y], func, "numpy")
     xx = diff(f, x)
     print(xx)
@@ -356,6 +360,10 @@ def conv_B(f):
     imageY = lambdify([x, y], yy)
     tab = [imageX(0, 0), imageY(0, 0)]
     return tab
+
+
+def f(x, A, b, c):
+    return 0.5 * x.T @ A @ x - b.T @ x + c
 
 
 def comparatif(A, B):
@@ -395,6 +403,33 @@ def comparatif(A, B):
                   "et un nbr exec ", k)
 
 
+def graph_Mat(A, b, c):
+    fig = plt.figure(figsize=(10, 8))
+    qf = fig.gca(projection='3d')
+    size = 20
+    x1 = list(np.linspace(-6, 6, size))
+    x2 = list(np.linspace(-6, 6, size))
+    x1, x2 = np.meshgrid(x1, x2)
+    zs = np.zeros((size, size))
+    for i in range(size):
+        for j in range(size):
+            x = np.matrix([[x1[i, j]], [x2[i, j]]])
+            zs[i, j] = f(x, A, b, c)
+    qf.plot_surface(x1, x2, zs, rstride=1, cstride=1, linewidth=0)
+    fig.show()
+    return x1, x2, zs
+
+
+def niveau4(x1, x2, zs, steps=None):
+    fig = plt.figure(figsize=(6, 6))
+    cp = plt.contour(x1, x2, zs, 10)
+    plt.clabel(cp, inline=1, fontsize=10)
+    if steps is not None:
+        steps = np.matrix(steps)
+        plt.plot(steps[:, 0], steps[:, 1], '-o')
+    fig.show()
+
+
 # TODO add niveau 3
 def niveau_2():
     """ qu'elle traitement voulez vous effectuer?"""
@@ -413,7 +448,11 @@ def niveau_2():
               )
         choix = input("\nEntrez votre choix [1-7] : \n")
         if choix == '1':
-            graph(func)
+            if Matrix:
+                graph_Mat(A, B, C=0)
+            else:
+                graph(func)
+
             niveau_2()
         elif choix == '2':
             # ax = graph(func)
@@ -488,6 +527,7 @@ def niveau_3():
         depart = [x0, y0]
 
         step(depart, eps)
+        graph_niveau_Mat()
 
 
 def step(x0, eps):
