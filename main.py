@@ -34,7 +34,7 @@ def functions():  # HAWEL TCHOUF CHNIA MOCHKOLT L MENU HEDHA
            3 : f3(x,y) = 5 * x ** 2 + 3 * y ** 2 + 2 * x * y"""
               )  # TODO write this function's message
         choix = input("\nEntrez votre choix [1-3] : ")
-        global func, x
+        global func, x,y,A,B
         if choix == '1':
             func = (1 - x) ** 2 + 100 * (y - (x ** 2)) ** 2
             # func = pow(1-x,2)+100*pow(y-pow(x,2),2)
@@ -56,6 +56,8 @@ def functions():  # HAWEL TCHOUF CHNIA MOCHKOLT L MENU HEDHA
 
         elif choix == '3':
             func = 5 * x ** 2 + 3 * y ** 2 + 2 * x * y  # TODO to change with quadratic polynomial : Manel
+            A = hessienne(func)
+            B = conv_B(func)
             break
         else:
             print("choix incorrecte")
@@ -75,16 +77,17 @@ def entree():
     # string_func = input("""Votre fonction est sous la forme f(x,y)=ax**2+by**2+cxy:
     #                         sachant que x**2 est x au carrée \nentez les coeff a,b,c séparées par virgule',' """).lower()
     a, b, c = [int(x) for x in input("""Votre fonction est sous la forme f(x,y)=ax**2+by**2+cxy:
-                            sachant que x**2 est x au carrée \nentez les coeff a,b,c séparées par virgule',' """).split(
-        ', ')]
+                            sachant que x**2 est x au carrée \nentez les coeff a,b,c séparées par virgule',' """).split(',')]
     # X = extract_symbols(string_func, nbvariable)
     # fct = lambda x, y: string_func
-    global func, x, y, rosen
+    global func, x, y, rosen,A,B
 
     # func = eval(string_func)
     func = a * x ** 2 + b * y ** 2 + c * x * y
     rosen = false
     print(func)
+    A=hessienne(func)
+    B=conv_B(func)
     # TODO  force user to enter quadratic form
 
 
@@ -242,7 +245,7 @@ def graph_niv(func):
     ax.set_ylabel('y', fontsize=11)
     ax.set_zlabel('Z', fontsize=11)
     ax.contour(X, Y, Z, 10, cmap="autumn_r", linestyles="solid", offset=-1)
-    ax.contour(X, Y, Z, 10, colors="k", linestyles="solid")
+    # ax.contour(X, Y, Z, 10, colors="k", linestyles="solid")
     ax.view_init(20, 70)
     plt.show()
     # x, y = sp.symbols('x y', real=True)
@@ -310,7 +313,7 @@ def graph_niveau(func):
 
 
 def grad(f):
-    # x,y=symbols('x y',real=True)
+    x, y = symbols('x y', real=True)
     # f = func
     tab = [diff(f, x), diff(f, y)]
     return tab
@@ -328,24 +331,23 @@ def hessienne(f):
 
 def Rozen_brock_GC():
     x, y = symbols('x y', real=True)
-
     f = func
-
     print("la fonction est : ", f)
     print("solution de rozen brook avec la methode de gradient conjugé : \n ")
-    # f = lambdify([(x, y)], func, "numpy")
+    f = lambdify([(x, y)], func, "numpy")
     x0 = [random.randint(0, 10), random.randint(0, 10)]
-    X = x0[0]
-    Y = x0[1]
-    Grad = grad(f)
+    x = x0[0]
+    y = x0[1]
+    # Grad = grad(f)
     # chercher la direction initial ali hiya -grad(f(x0))
-    d0 = [-Grad[0], -Grad[1]]
-    print(op.fmin_cg(f, (X, Y)))
+    # d0 = [-Grad[0], -Grad[1]]
+    print(op.fmin_cg(f, (x0[0], x0[1])))
     print("\n")
 
 
-def b():
-    f = lambdify([x, y], func, "numpy")
+def conv_B(f):
+
+    # f = lambdify([x, y], func, "numpy")
     xx = diff(f, x)
     print(xx)
     yy = diff(f, y)
@@ -412,21 +414,26 @@ def niveau_2():
         choix = input("\nEntrez votre choix [1-7] : \n")
         if choix == '1':
             graph(func)
+            niveau_2()
         elif choix == '2':
             # ax = graph(func)
             graph_niv(func)
+            niveau_2()
         elif choix == '3':
             print("le gradiant est ")
             print(grad(func))
+            niveau_2()
         elif choix == '4':
             print("l'hessienne est ")
             print(hessienne(func))
+            niveau_2()
         elif choix == '5':
             niveau_3()
         elif choix == '6':
             comparatif(A, B)
+            niveau_2()
         elif choix == '7':
-            entree()
+            main()
             break
         else:
             print("choix incorrecte")
@@ -439,6 +446,7 @@ def niveau_2():
 def niveau_3():
     if rosen:
         Rozen_brock_GC()
+        niveau_2()
     else:
         pas, eps, x0, y0 = 0, 0, 0, 0
         # os.system('clear')
@@ -502,8 +510,10 @@ def step(x0, eps):
                 except ValueError:
                     print("erreur de saisie")
             conjugue(A, B, x0, 100, eps, pas)
+            niveau_2()
         elif choix == '2':
             conjugue(A, B, x0, 100, eps)
+            niveau_2()
         else:
             print("choix incorrecte")
             step(x0, eps)
