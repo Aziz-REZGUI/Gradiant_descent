@@ -7,7 +7,7 @@ from sympy import *
 import os
 import scipy.linalg as spl
 import matplotlib.pyplot as plt
-from numpy import linalg as LA, matrix
+from numpy import linalg as LA, matrix, double
 import scipy.optimize as op
 
 # jarrabt el hessienne wel grad yekhdmou maa l graph wel l de niveau jawna ahla jaw
@@ -30,13 +30,14 @@ def functions():  # HAWEL TCHOUF CHNIA MOCHKOLT L MENU HEDHA
         print("Choisissez l'option que vous voulez utilisé [1-3]: ")
         print("""
            1 : f1(x,y) = (1-x) ** 2 + 100 * ( y - (x ** 2) ** 2)"
-           2 : f2 = None  #
-           3 : f3(x,y) = x * exp (-x**2 - y**2)"""
-              )
+           2 : f2 = None  
+           3 : f3(x,y) = 5 * x ** 2 + 3 * y ** 2 + 2 * x * y"""
+              )  # TODO write this function's message
         choix = input("\nEntrez votre choix [1-3] : ")
         global func, x
         if choix == '1':
-            func = (1 - x) ** 2 + 100 * (y - x ** 2) ** 2
+            func = (1 - x) ** 2 + 100 * (y - (x ** 2)) ** 2
+            # func = pow(1-x,2)+100*pow(y-pow(x,2),2)
             global rosen
             rosen = true
             break
@@ -54,7 +55,7 @@ def functions():  # HAWEL TCHOUF CHNIA MOCHKOLT L MENU HEDHA
             break
 
         elif choix == '3':
-            func = x * exp(-x ** 2 - y ** 2)  # TODO to change with quadratic polynomial : Manel
+            func = 5 * x ** 2 + 3 * y ** 2 + 2 * x * y  # TODO to change with quadratic polynomial : Manel
             break
         else:
             print("choix incorrecte")
@@ -87,6 +88,24 @@ def entree():
     # TODO  force user to enter quadratic form
 
 
+# def enter_Noquad():
+#     # instance les variables pour le fonctionnement de eval
+#     # nbvariable = int(input("Donner le nombre de variables"))
+#     global string_func
+#     string_func = input("""entrez votre fonction  avec des variables x et y:
+#                            """).lower()
+#     # a, b, c = [int(x) for x in input("""Votre fonction est sous la forme f(x,y)=ax**2+by**2+cxy:
+#     #                            sachant que x**2 est x au carrée \nentez les coeff a,b,c séparées par virgule',' """).split(
+#     #     ', ')]
+#     # X = extract_symbols(string_func, nbvariable)
+#     # fct = lambda x, y: string_func
+#     global func, x, y, rosen
+#
+#     func = eval(string_func)
+#     # func = a * x ** 2 + b * y ** 2 + c * x * y
+#     rosen = true
+#     print(func)
+
 # a=input()
 # b=input()
 # c=input()
@@ -107,14 +126,6 @@ def entrer_matrice():
     for i in range(0, n):
         B[(i)] = (input('b[' + str(i + 1) + ']: '))
 
-    # for j in range(0, 2):
-    #     B[(j)] = (input('X0[' + str(j + 1) + ']: '))
-    #
-    # eps = int(input("entrer la tolérance "))
-
-    # global func
-    # func = eval(A)
-
 
 # TODO conversion de A et B : Manel
 # A=hessienne
@@ -127,9 +138,8 @@ def choix_entree():
 
         print("Choisissez l'option que vous voulez utilisé [1-2]: ")
         print("""
-               1 : saisir une fonction polynomiale.
+               1 : saisir une fonction polynomiale quadratique (f(x,y)=ax**2+by**2+cxy).
                2 : Saisir une fonction matricielle.
-               3 : Saisir une fonction de rosenbork.
                3 : revenir au menu précédant."""
               )
 
@@ -141,10 +151,12 @@ def choix_entree():
         if choix == '2':
             entrer_matrice()
             niveau_2()
-        if choix == '3':
-            global rosen
-            rosen = true
-            # TODO manel add rosen here
+        # if choix == '3':
+        #     global rosen
+        #     enter_Noquad()
+        #     # Rozen_brock_GC()
+        #     rosen = true
+        # TODO manel add rosen here
         elif choix == '4':
             main()
             break
@@ -212,7 +224,7 @@ def is_pos_def(x):
     return (np.array_equal(A, np.transpose(A))) and (np.all(np.linalg.eigvals(A) > 0)) and (spl.det(A) != 0)
 
 
-def graph_niv(func, ax):
+def graph_niv(func):
     x, y = sp.symbols('x y', real=True)
     v1 = var('x y')
     a = np.linspace(-400, 400, 100)
@@ -314,6 +326,36 @@ def hessienne(f):
     return tab
 
 
+def Rozen_brock_GC():
+    x, y = symbols('x y', real=True)
+
+    f = func
+
+    print("la fonction est : ", f)
+    print("solution de rozen brook avec la methode de gradient conjugé : \n ")
+    # f = lambdify([(x, y)], func, "numpy")
+    x0 = [random.randint(0, 10), random.randint(0, 10)]
+    X = x0[0]
+    Y = x0[1]
+    Grad = grad(f)
+    # chercher la direction initial ali hiya -grad(f(x0))
+    d0 = [-Grad[0], -Grad[1]]
+    print(op.fmin_cg(f, (X, Y)))
+    print("\n")
+
+
+def b():
+    f = lambdify([x, y], func, "numpy")
+    xx = diff(f, x)
+    print(xx)
+    yy = diff(f, y)
+    print(yy)
+    imageX = lambdify([x, y], xx)
+    imageY = lambdify([x, y], yy)
+    tab = [imageX(0, 0), imageY(0, 0)]
+    return tab
+
+
 def comparatif(A, B):
     # list = [[0, 0, 0], [1, 2, 3], [3, 3, 4]]
     # results = np.zeros((len(A), 1))
@@ -327,7 +369,8 @@ def comparatif(A, B):
         list = [[0, 0], [1, 2], [2, 3]]  # TODO to check with omar
         for i in [0, 1, 2]:
             # z = f(x, y)
-            x0 = random.choice(list)
+            # x0 = random.choice(list)
+            x0 = [random.randint(0, 10), random.randint(0, 10)]
             X = x0[0]
             Y = x0[1]
 
@@ -370,20 +413,18 @@ def niveau_2():
         if choix == '1':
             graph(func)
         elif choix == '2':
-            ax = graph(func)
-            graph_niv(func, ax)
+            # ax = graph(func)
+            graph_niv(func)
         elif choix == '3':
             print("le gradiant est ")
             print(grad(func))
         elif choix == '4':
             print("l'hessienne est ")
             print(hessienne(func))
-        # elif choix == '5':
-        # TODO redirection vers niv 3
-        # conjugue(A, b, X, itMax, tol)
+        elif choix == '5':
+            niveau_3()
         elif choix == '6':
             comparatif(A, B)
-            # TODO test (Rosenbrok)
         elif choix == '7':
             entree()
             break
@@ -393,6 +434,82 @@ def niveau_2():
         # output.clear()
         #         # os.clear()
         exit()
+
+
+def niveau_3():
+    if rosen:
+        Rozen_brock_GC()
+    else:
+        pas, eps, x0, y0 = 0, 0, 0, 0
+        # os.system('clear')
+        # output.clear()
+        print("""saisir vos propres valeurs de eps,pas,vecteur X0 """)
+        # Lecture des paramétres propre à l'utilisateur :
+        # Lecture de eps :
+        print("Saisir la precision eps: \n")
+        while True:
+            try:
+                eps = np.double(input("eps doit etre sous la forme x.xxxx"))
+                break
+            except ValueError:
+                print("erreur de saisie ")
+
+        # Lecture de vecteur de départ :
+        print("saisir X0 le vecteur de départ ")
+        print("X0=[x y]")
+
+        # pour X :
+        while True:
+            try:
+                x0 = double(input("saisir x "))
+                break
+            except ValueError:
+                print("erreur de saisie")
+
+        # pour Y :
+        while True:
+            try:
+                y0 = double(input("saisir y "))
+                break
+            except ValueError:
+                print("erreur de saisie")
+
+        print(" le vecteur de départ X0=[", x0, " ", y0, "]")
+
+        # Lecture du pas :
+        depart = [x0, y0]
+
+        step(depart, eps)
+
+
+def step(x0, eps):
+    while True:
+        # os.system('clear')
+        # output.clear()
+        print("Choisissez l'option que vous voulez utilisé [1-2]: ")
+        print("""
+            1 : voulez vous utiliser un pas fixe?
+            2 : voulez vous utiliser un pas optimal(variable)"""
+              )
+        choix = input("\nEntrez votre choix [1-2] : \n")
+        if choix == 1:
+            print("saisir le pas(alpha) :\n ")
+            while True:
+                try:
+                    pas = np.double(input("pas(alpha) doit etre different de 0 "))
+                    break
+
+                except ValueError:
+                    print("erreur de saisie")
+            conjugue(A, B, x0, 100, eps, pas)
+        elif choix == '2':
+            conjugue(A, B, x0, 100, eps)
+        else:
+            print("choix incorrecte")
+            step(x0, eps)
+            # output.clear()
+            #         # os.clear()
+            exit()
 
 
 # TODO
