@@ -48,10 +48,13 @@ def functions():  # HAWEL TCHOUF CHNIA MOCHKOLT L MENU HEDHA
                           [0, -1, 24, -1, 0],
                           [0, 0, -1, 48, -1],
                           [0, 0, 0, -1, 96]])
-            B = np.array([1, 2, 3, 4, 5])
+            B = np.array([[1], [2], [3], [4], [5]])
             Matrix = true
+            x, y = symbols('x y', real=True)
+            x = np.zeros((len(A), 1))
             # x = matrix[x]
-            func = f(x, A, B, C=0)
+
+            func = fn(x, A, B, 0)
             # TODO how to draw this ?? abir ??
             break
 
@@ -66,57 +69,27 @@ def functions():  # HAWEL TCHOUF CHNIA MOCHKOLT L MENU HEDHA
             break
 
 
-#         # os.clear()
-# output.clear()
-# exit()
-def f(x, A, b, c):
-    return 0.5 * x.T @ A @ x - b.T @ x + c
+def fn(x, A, b, c=0.0):
+    return 0.5 * np.transpose(x) @ A @ x - np.transpose(b) @ x + c
 
 
 def entree():
     # instance les variables pour le fonctionnement de eval
-    # nbvariable = int(input("Donner le nombre de variables"))
+
     global string_func
-    # string_func = input("""Votre fonction est sous la forme f(x,y)=ax**2+by**2+cxy:
-    #                         sachant que x**2 est x au carrée \nentez les coeff a,b,c séparées par virgule',' """).lower()
+
     a, b, c = [int(x) for x in input("""Votre fonction est sous la forme f(x,y)=ax**2+by**2+cxy:
                             sachant que x**2 est x au carrée \nentez les coeff a,b,c séparées par virgule',' """).split(
         ',')]
-    # X = extract_symbols(string_func, nbvariable)
-    # fct = lambda x, y: string_func
+
     global func, x, y, rosen, A, B
 
-    # func = eval(string_func)
     func = a * x ** 2 + b * y ** 2 + c * x * y
     rosen = false
     print(func)
     A = hessienne(func)
     B = conv_B(func)
     # TODO  force user to enter quadratic form
-
-
-# def enter_Noquad():
-#     # instance les variables pour le fonctionnement de eval
-#     # nbvariable = int(input("Donner le nombre de variables"))
-#     global string_func
-#     string_func = input("""entrez votre fonction  avec des variables x et y:
-#                            """).lower()
-#     # a, b, c = [int(x) for x in input("""Votre fonction est sous la forme f(x,y)=ax**2+by**2+cxy:
-#     #                            sachant que x**2 est x au carrée \nentez les coeff a,b,c séparées par virgule',' """).split(
-#     #     ', ')]
-#     # X = extract_symbols(string_func, nbvariable)
-#     # fct = lambda x, y: string_func
-#     global func, x, y, rosen
-#
-#     func = eval(string_func)
-#     # func = a * x ** 2 + b * y ** 2 + c * x * y
-#     rosen = true
-#     print(func)
-
-# a=input()
-# b=input()
-# c=input()
-# func = a*x**2+ b*y**2 + c*x*y
 
 
 def entrer_matrice():
@@ -136,8 +109,6 @@ def entrer_matrice():
 
 
 # TODO conversion de A et B : Manel
-# A=hessienne
-# B=b()
 
 def choix_entree():
     """ Affiche le meneu d choix de saisie """
@@ -159,11 +130,8 @@ def choix_entree():
         if choix == '2':
             entrer_matrice()
             niveau_2()
-        # if choix == '3':
-        #     global rosen
-        #     enter_Noquad()
-        #     # Rozen_brock_GC()
-        #     rosen = true
+        if choix == '3':
+            main()
         # TODO manel add rosen here
         elif choix == '4':
             main()
@@ -253,14 +221,6 @@ def graph_niv(func):
     # ax.contour(X, Y, Z, 10, colors="k", linestyles="solid")
     ax.view_init(20, 70)
     plt.show()
-    # x, y = sp.symbols('x y', real=True)
-    # v1 = var('x y')
-    # X, Y = np.meshgrid(np.linspace(0, 2, 201), np.linspace(0, 2, 201))
-    # f = lambdify([x, y], func, "numpy")
-    # Z = f(X, Y)
-    # ax.contour(X, Y, Z, np.linspace(0, 1, 21))
-    # plt.colorbar()
-    # plt.show()
 
 
 class bcolors:  # Affichage avec couleurs.
@@ -296,7 +256,6 @@ def conjugue(A, b, X, itMax, tol, pas=0):
         # print(bcolors.OK + "\n notre solution minimale cherchée X = \n", X)
     end = time.time()
     duree = end - start
-    # return result , nb it , exec duration
     return X, k, duree
 
 
@@ -312,7 +271,6 @@ def graph_niveau(func):
     cp = ax.contour(X, Y, Z)
     fig.colorbar(cp)  # Add a colorbar to a plot
     ax.set_title('Graph de niveau')
-    # ax.set_xlabel('x (cm)')
     ax.set_ylabel('y (cm)')
     plt.show()
 
@@ -343,15 +301,11 @@ def Rozen_brock_GC():
     x0 = [random.randint(0, 10), random.randint(0, 10)]
     x = x0[0]
     y = x0[1]
-    # Grad = grad(f)
-    # chercher la direction initial ali hiya -grad(f(x0))
-    # d0 = [-Grad[0], -Grad[1]]
     print(op.fmin_cg(f, (x0[0], x0[1])))
     print("\n")
 
 
 def conv_B(f):
-    # f = lambdify([x, y], func, "numpy")
     xx = diff(f, x)
     print(xx)
     yy = diff(f, y)
@@ -362,16 +316,7 @@ def conv_B(f):
     return tab
 
 
-def f(x, A, b, c):
-    return 0.5 * x.T @ A @ x - b.T @ x + c
-
-
 def comparatif(A, B):
-    # list = [[0, 0, 0], [1, 2, 3], [3, 3, 4]]
-    # results = np.zeros((len(A), 1))
-    # b = np.array([[3.], [2.], [3.]])  # b=vecteur colonne (0 1)
-    # X0 = np.array([[0.], [0.], [0.]])  # x0=vecteur colonne (0 0)
-    # a = np.array([[2., 0., 1], [0., 2., 0.], [1., 0., 2.]])  # A=matrice carré
     tol = 1e-5  # La précision fixée à 10e-5
     if rosen:
         x, y = sp.symbols('x y', real=True)
@@ -405,16 +350,16 @@ def comparatif(A, B):
 
 def graph_Mat(A, b, c):
     fig = plt.figure(figsize=(10, 8))
-    qf = fig.gca(projection='3d')
-    size = 20
-    x1 = list(np.linspace(-6, 6, size))
-    x2 = list(np.linspace(-6, 6, size))
+    qf = fig.add_subplot(projection='3d')
+    size = 100
+    x1 = list(np.linspace(-6, 6, len(A)))
+    x2 = list(np.linspace(-6, 6, len(A)))
     x1, x2 = np.meshgrid(x1, x2)
     zs = np.zeros((size, size))
     for i in range(size):
         for j in range(size):
             x = np.matrix([[x1[i, j]], [x2[i, j]]])
-            zs[i, j] = f(x, A, b, c)
+            zs[i, j] = fn(x, A, b, c)
     qf.plot_surface(x1, x2, zs, rstride=1, cstride=1, linewidth=0)
     fig.show()
     return x1, x2, zs
@@ -449,13 +394,12 @@ def niveau_2():
         choix = input("\nEntrez votre choix [1-7] : \n")
         if choix == '1':
             if Matrix:
-                graph_Mat(A, B, C=0)
+                graph_Mat(A, B, 0)
             else:
                 graph(func)
 
             niveau_2()
         elif choix == '2':
-            # ax = graph(func)
             graph_niv(func)
             niveau_2()
         elif choix == '3':
@@ -527,7 +471,7 @@ def niveau_3():
         depart = [x0, y0]
 
         step(depart, eps)
-        graph_niveau_Mat()
+        graph_Mat()
 
 
 def step(x0, eps):
@@ -549,11 +493,18 @@ def step(x0, eps):
 
                 except ValueError:
                     print("erreur de saisie")
-            conjugue(A, B, x0, 100, eps, pas)
-            niveau_2()
+            x, k, du = conjugue(A, B, x0, 100, eps, pas)
+            print("le mininum est ", x)
+            # niveau_2()
+            x1, x2, zs = graph_Mat(A, B, 0)
+            niveau4(x1, x2, zs)
+
         elif choix == '2':
-            conjugue(A, B, x0, 100, eps)
-            niveau_2()
+            x, k, du = conjugue(A, B, x0, 100, eps)
+            print("le mininum est ", x)
+            x1, x2, zs = graph_Mat(A, B, 0)
+            niveau4(x1, x2, zs)
+            # niveau_2()
         else:
             print("choix incorrecte")
             step(x0, eps)
@@ -566,182 +517,3 @@ def step(x0, eps):
 
 if __name__ == '__main__':
     main()
-
-    # x0 = np.random.random_sample(size=(1,len(A)))
-    #         x, k, du = conjugate_gradient_mat(A, B, 1.5e-8, x0)
-    #         print("la resultat n°", i, "=", x, "avec un vecteur de depart :", k, "et une durée d'exec = ", du)
-
-# def menu_fonctions()
-# def extract_symbols(string_func, nbS):
-#     i = 0
-#     s = ''
-#     while i < nbS:
-#         s += 'x' + str(i) + ' '
-#         i += 1
-#     return symbols(s, real=True)
-
-
-# vecteur gradient
-# def gradient(string_func, nbS=2):
-#     X = [x, y]
-#     func = eval(string_func)
-#     i = 0
-#     dX = [None] * nbS
-#     while i < nbS:
-#         dX[i] = diff(func, X[i])
-#         i += 1
-#     return dX
-
-
-# matrice hessienne
-# def hessienne(dX, string_func):
-#     nbS = len(dX)
-#     i = 0
-#     X = extract_symbols(string_func, nbS)
-#     H = np.array([[None] * nbS, [None] * nbS])
-#     while i < nbS:
-#         j = 0
-#         while j < nbS:
-#             H[i, j] = diff(dX[i], X[j])
-#             j += 1
-#         i += 1
-#     return H
-
-# def graph():
-#    fig = plt.figure(figsize=(8, 8))
-#    ax = plt.axes(projection='3d')
-#    # ax.grid()
-#    global x
-#    global y
-#    print(func)
-#    t = func
-#    X = np.linspace(-1, 1, 100)
-#    Y = np.linspace(-1, 1, 100)
-#    x, y = np.meshgrid(X, Y)
-# t = f(x, y)
-#    ax.plot_surface(x, y, t, rstride=1, cstride=1, cmap='viridis', edgecolor='none')#TODO houni l'erreur apparently MANEL/EYA
-# ax.contour3D(x, y, t, 50, cmap='binary')
-# ax.plot3D(x, y, t)
-# ax.plot_surface(x, y,t, rstride=1, cstride=1, cmap='viridis', edgecolor='none')
-#    ax.set_title('3D Parametric Plot')
-
-# Set axes label
-#    ax.set_xlabel('x', labelpad=20)
-#    ax.set_ylabel('y', labelpad=20)
-#    ax.set_zlabel('t', labelpad=20)
-
-#    plt.show()
-
-
-# def graph_niveau():
-#     # Tracer le graphe
-#     ax = np.linspace(-1, 1, 100)
-#     ay = np.linspace(-1, 1, 100)
-#     ax, ay = np.meshgrid(ax, ay)
-#     # fn =  simpledialog.askstring("Input","fonction")
-#     print(eval(string_func))
-#     Z = eval(string_func)
-#     fig = plt.figure()
-#     ax = fig.add_subplot(projection='3d')
-#     print(cos(10) + sin(10))
-#     # ax.plot_surface(x, y, Z)
-#     ax.plot_surface(ax, ay, Z, cmap=cm.nipy_spectral_r)
-#     msg = "Graphe du fonction  " + func
-#     plt.title(msg)
-#     ax.set_xlabel('x')
-#     ax.set_ylabel('y')
-#     ax.set_zlabel('Z')
-#     # plt.legend("Graphe du fontion")
-#     plt.figure(2)
-#     plt.axis('equal')
-#     # plt.contourf(x, y, Z, 20)
-#     plt.contour(ax, ay, Z, cmap=cm.nipy_spectral_r)
-#     plt.colorbar()
-#     plt.show()
-# """"
-# A = np.array([[3, -1,0,0,0], [-1, 12,-1,0,0],[0,-1, 24,-1,0],[0,0,-1,48,-1],[0,0,0,-1,96]])
-# b = np.array([1,2,3,4,5])
-# x0 = np.array([0, 5])
-# """
-# A = np.array([[2, 0,1], [0, 2,0],[1,0, 2]])
-# b = np.array([3,2,3])
-# x0 = np.array([0, 0])
-#
-#
-# eps = 1e-2  # condition d'arret ba3d nda5louha men 3and il utilisateur
-#
-#
-#
-# x=conjugate_gradient_matrice(A, b, eps)
-# print(x)
-
-
-# def entrer_matrice(A,B,n):
-#     for r in range(0,n):
-#         for c in range(0,n):
-#             A[(r),(c)]=(input("Element a["+str(r+1)+","+str(c+1)+"] "))
-#         B[(r)]=(input('b['+str(r+1)+']: '))
-
-
-# def conjugate_gradient_matrice(A, b, eps, alpha):
-#     """ calcule le gradiant conjugée de A et B
-#         cette fonction retourne la resultat x, le nbre d'iterations k et le temps d'execution  duree
-#         exemple   x,k,duree=conjugate_gradient_matrice(A,B)
-#     """
-#     if (is_pos_def(A) == False) | (A != A.T).any():
-#         raise ValueError('Matrice A n\est pas symetrique positive   ')
-#     d0 = b
-#     k = 0
-#     x = np.zeros(A.shape[-1])  # initialisation mta3 il solution
-#     nb_max_iter = 100  # Nb max d'iteration
-#     start = time.time()
-#     """" Condition d'arret"""
-#     while LA.norm(d0) > eps and k < nb_max_iter:
-#         print("Iter", k)
-#
-#         if k == 0:
-#             direc = d0  # direction initiale
-#             # print(direc)
-#         else:
-#             Belta = - (direc @ A @ d0) / (direc @ A @ direc)
-#             # print("Belta: " + str(Belta))
-#             direc = d0 + Belta * direc
-#             # print("direction: " + str(direc))
-#             # print("norm: " + str(np.linalg.norm(direc)))
-#         # alpha = (direc @ d0) / (direc @ A @ direc)  # à vérifier si elle est le pas ou nn si nn on la met une cte 1/2
-#
-#         print("alpha=", alpha)
-#         x = x + alpha * direc
-#         print("newx: " + str(x))
-#
-#         d0 = d0 - alpha * (A @ direc)
-#         k = + 1
-#     end = time.time()
-#     duree = end - start
-#     return x, k, duree
-
-
-# def conjugate_gradient_mat(A, b, eps, x):
-#     """ calcule le gradiant conjugée de A et B
-#             cette fonction retourne la resultat x, le nbre d'iterations k et le temps d'execution  duree
-#             exemple   x,k,duree=conjugate_gradient_matrice(A,B)
-#         """
-#     if (is_pos_def(A) == False) | (A != A.T).any():
-#         raise ValueError("Matrice A n'est pas symetrique positive")
-#     d0 = b - A @ x
-#     k = 0
-#     nb_max_iter = 100  # Nb max d'iteration
-#     start = time.time()
-#     while LA.norm(d0) > eps and k < nb_max_iter:
-#         direc = d0
-#         q = A @ direc
-#         alpha = (direc @ d0) / (direc @ q)
-#         # print("alpha=", alpha)
-#         x = x + alpha * direc
-#         # print("newx: " + str(x))
-#         d0 = d0 - alpha * q
-#         k += 1
-#     end = time.time()
-#     duree = end - start
-#
-#     return x, k, duree
