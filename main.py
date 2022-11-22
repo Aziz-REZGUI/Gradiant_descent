@@ -22,6 +22,20 @@ Matrix = false
 rosen = false
 
 
+
+def clear():
+    global x,y,f
+    x, y = symbols('x y', real=True)
+    func = None
+    f1 = None
+    string_func = ""
+    A = None
+    B = None
+    eps = None
+    Matrix = false
+    rosen = false
+
+
 def functions():  # HAWEL TCHOUF CHNIA MOCHKOLT L MENU HEDHA
     """ qu'elle fonction voulez vous choisir? """
     while True:
@@ -86,7 +100,6 @@ def entree():
 
     func = a * x ** 2 + b * y ** 2 + c * x * y
     rosen = false
-    print(func)
     A = hessienne(func)
     B = conv_B(func)
     # TODO  force user to enter quadratic form
@@ -180,7 +193,6 @@ def graph(func):
     a = np.linspace(-400, 400, 100)
     b = np.linspace(-400, 400, 100)
     X, Y = np.meshgrid(a, b)
-    print(func)
     f = lambdify([x, y], func, "numpy")
     Z = f(X, Y)
     fig = plt.figure(figsize=(10, 7))
