@@ -199,10 +199,11 @@ def entrer_matrice():
     n = 2
     global A
     global B
-    global eps, Matrix
+    global eps, Matrix,tras
     global entrerMatrice
     entrerMatrice = true
     Matrix = true
+    tras=true
     A = np.zeros((n, n))
     B = np.zeros((n, 1))
     for r in range(0, n):
@@ -250,7 +251,7 @@ def niveau_2():
             graph_niv(func)
             niveau_2()
         elif choix == '3':
-            if Matrix == True:
+            if Matrix and len(A)<3:
                 print("on ne peut pas calculer le gradient d'une matrice de taille 5*5")
                 niveau_2()
             else:
@@ -258,7 +259,7 @@ def niveau_2():
                 print(grad(func))
                 niveau_2()
         elif choix == '4':
-            if Matrix and memoryMatrix:
+            if Matrix :
                 print("on ne peut pas calculer la matrice hessienne d'une fonction matriciel avec taille de A>2")
                 niveau_2()
             elif Matrix and entrerMatrice:
