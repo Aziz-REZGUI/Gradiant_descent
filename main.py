@@ -21,10 +21,9 @@ eps = None
 Matrix = false
 rosen = false
 
-
-
+tras=false
 def clear():
-    global x,y,f
+    global x, y, f
     x, y = symbols('x y', real=True)
     func = None
     f1 = None
@@ -34,6 +33,7 @@ def clear():
     eps = None
     Matrix = false
     rosen = false
+    tras = false
 
 
 def functions():  # HAWEL TCHOUF CHNIA MOCHKOLT L MENU HEDHA
@@ -56,7 +56,8 @@ def functions():  # HAWEL TCHOUF CHNIA MOCHKOLT L MENU HEDHA
             rosen = true
             break
         elif choix == '2':
-            global A, B, Matrix
+            global A, B, Matrix,tras
+            tras=true
             A = np.array([[3, -1, 0, 0, 0],
                           [-1, 12, -1, 0, 0],
                           [0, -1, 24, -1, 0],
@@ -69,6 +70,7 @@ def functions():  # HAWEL TCHOUF CHNIA MOCHKOLT L MENU HEDHA
             # x = matrix[x]
 
             func = fn(x, A, B, 0)
+
             # TODO how to draw this ?? abir ??
             break
 
@@ -104,9 +106,10 @@ def entree():
     B = conv_B(func)
     # TODO  force user to enter quadratic form
 
-
+#TODO MaNel here
 def entrer_matrice():
-    n = int(input("Entrer le dimension de la matrice"))
+    print("votre matrice est de taille ")
+    n = 2
     global A
     global B
     global eps, Matrix
@@ -146,9 +149,6 @@ def choix_entree():
         if choix == '3':
             main()
         # TODO manel add rosen here
-        elif choix == '4':
-            main()
-            break
         else:
             print("choix incorrecte")
             choix_entree()
@@ -241,34 +241,68 @@ class bcolors:  # Affichage avec couleurs.
     RESET = '\033[0m'  # rest des couleurs
 
 
-def conjugue(A, b, X, itMax, tol, pas=0):
+def conjugue(A, b, X, itMax, tol):
+    steps = [(-2.0, -2.0)]
     if (is_pos_def(A) == False):
-        raise ValueError("Matrice A n'est pas symetrique positive")
+        print("\n A n'est pas symétrique définie positive")
     else:
-        R = b - A.dot(X)  # -gradient de f(Xk)
+        R = b - A @ X  # -gradient de f(Xk)
         P = R  # Direction initiale (-gradient de la fonction)
         k = 0
-        alpha = pas
+
+        steps = [(-2.0, -2.0)]
         start = time.time()
-        while (k <= itMax) and (LA.norm(R) > tol):  # verification des condition:
+        while (k <= itMax) and (LA.norm(R) > tol):  # verification des condition: #La précision fixée à 10e-5
             # && nombre d'itération ne dépasse pas nbr max
             Ap = A.dot(P)  # A * P
-            if pas == 0:  # cas optimal
-                alpha = np.transpose(R).dot(R) / np.transpose(P).dot(Ap)  # pas optimale
-            X = X + (alpha * P)  # X(k+1) = X(k) + direction(k) * pas(k) TODO also this :eya
+            alpha = np.transpose(R).dot(R) / np.transpose(P).dot(Ap)  # pas
+            X = X + (alpha * P)  # X(k+1) = X(k) + direction(k) * pas(k)
+            steps.append((X[0, 0], X[1, 0]))
             Rancien = R  # R(k) -->gradient f(k+1)
             R = R - (alpha * Ap)  # R(k+1) --> -gradient f(k+1)
-
-            beta = (np.transpose(R).dot(R) / np.transpose(Rancien).dot(Rancien))
-            P = R + beta * P  # direction k+1 TODO check how to draw this in the graph: eya
+            beta = np.transpose(R).dot(R) / np.transpose(Rancien).dot(Rancien)
+            P = R + beta * P  # direction k+1
 
             k = k + 1  # incrémentation d'itération
-        # print("\nle nombre d'itération = \n", k)
-        #
-        # print(bcolors.OK + "\n notre solution minimale cherchée X = \n", X)
-    end = time.time()
-    duree = end - start
-    return X, k, duree
+        end = time.time()
+        duree = end - start
+        print("\nle nombre d'itération = \n", k)
+
+        print("\n notre solution minimale cherchée X = \n", X)
+
+    # return result , nb it , exec duration
+    return X, k, duree, steps
+
+
+# def conjugue(A, b, X, itMax, tol, pas=0):
+#     if (is_pos_def(A) == False):
+#         raise ValueError("Matrice A n'est pas symetrique positive")
+#     else:
+#         R = b - A.dot(X)  # -gradient de f(Xk)
+#         P = R  # Direction initiale (-gradient de la fonction)
+#         k = 0
+#         alpha = pas
+#         steps=n
+#         start = time.time()
+#         while (k <= itMax) and (LA.norm(R) > tol):  # verification des condition:
+#             # && nombre d'itération ne dépasse pas nbr max
+#             Ap = A.dot(P)  # A * P
+#             if pas == 0:  # cas optimal
+#                 alpha = np.transpose(R).dot(R) / np.transpose(P).dot(Ap)  # pas optimale
+#             X = X + (alpha * P)  # X(k+1) = X(k) + direction(k) * pas(k) TODO also this :eya
+#             Rancien = R  # R(k) -->gradient f(k+1)
+#             R = R - (alpha * Ap)  # R(k+1) --> -gradient f(k+1)
+#
+#             beta = (np.transpose(R).dot(R) / np.transpose(Rancien).dot(Rancien))
+#             P = R + beta * P  # direction k+1 TODO check how to draw this in the graph: eya
+#
+#             k = k + 1  # incrémentation d'itération
+#         # print("\nle nombre d'itération = \n", k)
+#         #
+#         # print(bcolors.OK + "\n notre solution minimale cherchée X = \n", X)
+#     end = time.time()
+#     duree = end - start
+#     return X, k, duree
 
 
 def graph_niveau(func):
@@ -363,11 +397,12 @@ def comparatif(A, B):
 def graph_Mat(A, b, c):
     fig = plt.figure(figsize=(10, 8))
     qf = fig.add_subplot(projection='3d')
-    size = 100
-    x1 = list(np.linspace(-6, 6, len(A)))
-    x2 = list(np.linspace(-6, 6, len(A)))
+    size = 200
+    x1 = list(np.linspace(-6, 6, size))
+    x2 = list(np.linspace(-6, 6, size))
     x1, x2 = np.meshgrid(x1, x2)
     zs = np.zeros((size, size))
+
     for i in range(size):
         for j in range(size):
             x = np.matrix([[x1[i, j]], [x2[i, j]]])
@@ -380,6 +415,7 @@ def graph_Mat(A, b, c):
 def niveau4(x1, x2, zs, steps=None):
     fig = plt.figure(figsize=(6, 6))
     cp = plt.contour(x1, x2, zs, 10)
+    # X, k, duree, steps = conjugue(A, B, x, 100, 1e-10)
     plt.clabel(cp, inline=1, fontsize=10)
     if steps is not None:
         steps = np.matrix(steps)
@@ -405,11 +441,12 @@ def niveau_2():
               )
         choix = input("\nEntrez votre choix [1-7] : \n")
         if choix == '1':
-            if Matrix:
+            if Matrix and tras:
                 graph_Mat(A, B, 0)
-            else:
+            elif not Matrix and not tras:
                 graph(func)
-
+            elif Matrix and not tras:
+                print("on peut pas dessiner cette fonction\n")
             niveau_2()
         elif choix == '2':
             graph_niv(func)
@@ -505,17 +542,17 @@ def step(x0, eps):
 
                 except ValueError:
                     print("erreur de saisie")
-            x, k, du = conjugue(A, B, x0, 100, eps, pas)
+            x, k, du, s = conjugue(A, B, x0, 100, eps, pas)
             print("le mininum est ", x)
             # niveau_2()
             x1, x2, zs = graph_Mat(A, B, 0)
-            niveau4(x1, x2, zs)
+            niveau4(x1, x2, zs, s)
 
         elif choix == '2':
-            x, k, du = conjugue(A, B, x0, 100, eps)
+            x, k, du, s = conjugue(A, B, x0, 100, eps)
             print("le mininum est ", x)
             x1, x2, zs = graph_Mat(A, B, 0)
-            niveau4(x1, x2, zs)
+            niveau4(x1, x2, zs, s)
             # niveau_2()
         else:
             print("choix incorrecte")
