@@ -274,37 +274,6 @@ def conjugue(A, b, X, itMax, tol):
     return X, k, duree, steps
 
 
-# def conjugue(A, b, X, itMax, tol, pas=0):
-#     if (is_pos_def(A) == False):
-#         raise ValueError("Matrice A n'est pas symetrique positive")
-#     else:
-#         R = b - A.dot(X)  # -gradient de f(Xk)
-#         P = R  # Direction initiale (-gradient de la fonction)
-#         k = 0
-#         alpha = pas
-#         steps=n
-#         start = time.time()
-#         while (k <= itMax) and (LA.norm(R) > tol):  # verification des condition:
-#             # && nombre d'itération ne dépasse pas nbr max
-#             Ap = A.dot(P)  # A * P
-#             if pas == 0:  # cas optimal
-#                 alpha = np.transpose(R).dot(R) / np.transpose(P).dot(Ap)  # pas optimale
-#             X = X + (alpha * P)  # X(k+1) = X(k) + direction(k) * pas(k) TODO also this :eya
-#             Rancien = R  # R(k) -->gradient f(k+1)
-#             R = R - (alpha * Ap)  # R(k+1) --> -gradient f(k+1)
-#
-#             beta = (np.transpose(R).dot(R) / np.transpose(Rancien).dot(Rancien))
-#             P = R + beta * P  # direction k+1 TODO check how to draw this in the graph: eya
-#
-#             k = k + 1  # incrémentation d'itération
-#         # print("\nle nombre d'itération = \n", k)
-#         #
-#         # print(bcolors.OK + "\n notre solution minimale cherchée X = \n", X)
-#     end = time.time()
-#     duree = end - start
-#     return X, k, duree
-
-
 def graph_niveau(func):
     x, y = sp.symbols('x y', real=True)
     v1 = var('x y')
